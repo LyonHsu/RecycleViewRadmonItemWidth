@@ -1,0 +1,8 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="search_dialog_w">200dp</dimen>
+    <dimen name="item_w">150dp</dimen>
+    <dimen name="item2_w">300dp</dimen>
+    <dimen name="item_h">150dp</dimen>
+    <dimen name="item2_h">300dp</dimen>
+</resources>
