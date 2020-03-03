@@ -18,9 +18,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/please_input_search_key" />
+
     <EditText
-        android:id="@+id/search_key_edt"
-        android:hint="@string/action_search"
+        android:id="@+id/search_user_edt"
+        android:hint="@string/action_search_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

@@ -9,7 +9,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.bumptech.glide.Glide
 import org.json.JSONArray
+import kotlin.math.roundToInt
 
 
 val typeCount = 4
@@ -25,16 +27,15 @@ class CellAdapter(private var context: Context,private var jsonArray: JSONArray)
 
     inner class ViewHolder(itemView: View, var viewType: Int) : RecyclerView.ViewHolder(itemView) {
         var nameTextView: TextView? = null
-
+        var imageView:ImageView?=null
 
         fun bindModel(position:Int) {
-            var imageView: ImageView? = null
-            imageView = itemView.findViewById(R.id.image)
+            imageView = itemView.findViewById(R.id.imageView)
             nameTextView = itemView.findViewById(R.id.nameTextView)
-//            val imageUrl = jsonArray.getJSONObject(position).optString("avatar")
-//            val name = jsonArray.getJSONObject(position).optString("name")
-//            Glide.with(context).load(imageUrl).into(imageView!!)
-            nameTextView?.text=position.toString()
+            val imageUrl = jsonArray.getJSONObject(position).optString("imgUrl")
+            val name = jsonArray.getJSONObject(position).optString("name")
+            Glide.with(context).load(imageUrl).into(imageView!!)
+            nameTextView?.text=name
 
         }
     }
@@ -80,14 +81,16 @@ class CellAdapter(private var context: Context,private var jsonArray: JSONArray)
     }
 
     override fun getItemCount(): Int {
-        return 50;//jsonArray?.length() ?:0
+        return jsonArray?.length() ?:0
     }
 
-    override fun getItemViewType(position: Int): Int { // 瀑布流样式外部设置spanCount为3，在这列设置两个不同的item type，以区分不同的布局
-        val modeEight = position % typeCount
-        when (modeEight) {
-            0 -> return TYPE_HALF
-            1,2 -> return TYPE_QUARTER
+    override fun getItemViewType(position: Int): Int {
+        val type = jsonArray.getJSONObject(position).opt("type")
+        when (type) {
+            TYPE_HALF -> return TYPE_HALF
+            TYPE_QUARTER -> {
+                return TYPE_QUARTER
+            }
         }
         return TYPE_FULL
     }
@@ -96,5 +99,9 @@ class CellAdapter(private var context: Context,private var jsonArray: JSONArray)
         jsonArray?:return
         holder?.bindModel(position)
 
+    }
+
+    fun setData(jsonArray:JSONArray){
+        this.jsonArray=jsonArray
     }
 }

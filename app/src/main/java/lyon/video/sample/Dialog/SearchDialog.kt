@@ -25,7 +25,7 @@ abstract class SearchDialog(context: Context) : Dialog(context){
         }
 
         determine_btn.setOnClickListener {
-            determine(search_key_edt.text.toString())
+            determine(search_user_edt.text.toString())
             dismiss()
         }
     }
