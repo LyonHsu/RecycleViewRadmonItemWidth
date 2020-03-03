@@ -57,7 +57,7 @@ class VolletTool {
             queue = Volley.newRequestQueue(context)
         queue.add(stringRequest)
     }
-    
+
     fun CallJsonPath(httpUrl:String){
         if(!::queue.isInitialized){
             queue = Volley.newRequestQueue(context)

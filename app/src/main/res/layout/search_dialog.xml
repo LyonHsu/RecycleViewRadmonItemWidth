@@ -3,18 +3,20 @@
     android:orientation="vertical"
     android:layout_width="@dimen/search_dialog_w"
     android:layout_height="wrap_content"
-    android:padding="10dp"
     >
     <TextView
         android:text="@string/action_search"
+        android:background="#cccccc"
         android:textSize="20dp"
         android:textStyle="bold"
+        android:padding="5dp"
         android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
     <TextView
         android:id="@+id/title"
+        android:padding="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/please_input_search_key" />
@@ -22,6 +24,7 @@
     <EditText
         android:id="@+id/search_user_edt"
         android:hint="@string/action_search_user"
+        android:padding="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
@@ -31,11 +34,19 @@
         android:orientation="horizontal">
         <Button
             android:id="@+id/cancel_btn"
+            android:text="@string/cancel"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <Button
             android:id="@+id/determine_btn"
+            android:text="@string/determine"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

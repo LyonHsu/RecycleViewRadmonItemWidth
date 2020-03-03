@@ -15,7 +15,7 @@
         <shape xmlns:android="http://schemas.android.com/apk/res/android">
             <stroke android:width="0dp" android:color="#bebebe" />
             <!--設定圓角，當設置的圓角半徑很大，就可變成弧形邊了-->
-            <corners android:radius="150dip" />
+            <corners android:radius="5dip" />
             <solid android:color="#1ba7b4"></solid>
         </shape>
     </item>
@@ -24,7 +24,7 @@
         <shape xmlns:android="http://schemas.android.com/apk/res/android">
             <stroke android:width="0dp" android:color="#bebebe" />
             <!--設定圓角，當設置的圓角半徑很大，就可變成弧形邊了-->
-            <corners android:radius="150dip" />
+            <corners android:radius="5dip" />
             <solid android:color="#44ffffff"></solid>
         </shape>
     </item>
@@ -32,7 +32,7 @@
         <shape xmlns:android="http://schemas.android.com/apk/res/android">
             <stroke android:width="2dp" android:color="#111111" />
             <!--設定圓角，當設置的圓角半徑很大，就可變成弧形邊了-->
-            <corners android:radius="50dip" />
+            <corners android:radius="5dip" />
             <solid android:color="@android:color/holo_blue_bright"></solid>
         </shape>
     </item>
