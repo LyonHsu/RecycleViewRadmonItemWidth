@@ -2,11 +2,13 @@ package lyon.video.sample
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,7 +29,7 @@ var http = "https://api.github.com/search/users?q=keyWord&page=%p"//EX:https://a
 class MainActivity : AppCompatActivity() {
     val TAG = MainActivity::class.java.simpleName
     lateinit var volletTools:VolletTool
-    var keyWord = "Lyon"
+    var keyWord = "LyonHsu"
     var jsonArray=JSONArray()
     lateinit var ryvAdapter:CellAdapter
     var lastItemPosition =0;
@@ -35,7 +37,6 @@ class MainActivity : AppCompatActivity() {
     var totalCount =0
     var canGetData = true
     val delayTime = 3*1000
-    val Error =1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +83,39 @@ class MainActivity : AppCompatActivity() {
                 page++
                 canGetData = true
                 handler.removeCallbacks(runnable)
-                getJsonArray(response)
+                val total_count = response.optInt("total_count")
+                totalCount = total_count
+
+                var array = response.getJSONArray("items")
+                val len = array.length()
+                var isisTypeOne = false
+                for(i in 0..len-1){
+                    val jsonObject = array.optJSONObject(i)
+                    var name = jsonObject.optString("login")
+                    var imgUrl = jsonObject.optString("avatar_url")
+                    var html_url = jsonObject.optString("html_url")
+                    var type:Int = (Math.random()*3).roundToInt()
+                    if(isisTypeOne){
+                        isisTypeOne=false
+                        type = TYPE_QUARTER
+                    }else {
+                        if (type == TYPE_QUARTER) {
+                            isisTypeOne = true
+                        }
+                    }
+                    val json = JSONObject()
+                    json.put("name",name)
+                    json.put("imgUrl",imgUrl)
+                    json.put("type",type)
+                    json.put("html_url",html_url)
+
+                    jsonArray.put(json)
+                }
+
+                if(::ryvAdapter.isInitialized) {
+                    ryvAdapter.setData(jsonArray)
+                    ryvAdapter.notifyDataSetChanged()
+                }
             }
 
         })
@@ -94,6 +127,16 @@ class MainActivity : AppCompatActivity() {
         })
         val mLayoutManager = StaggeredGridLayoutManager(spanCount,StaggeredGridLayoutManager.VERTICAL)
         ryvAdapter = CellAdapter(this, jsonArray)
+        var context = this
+        ryvAdapter.setOnItemClickListener(object :CellAdapter.ItemClick{
+            override fun onCLick(v: View, position: Int) {
+                val intent = Intent(context, WebViewActivity::class.java)
+                val html_url = jsonArray.getJSONObject(position).optString("html_url")
+                intent.putExtra("html_url",html_url.toString())
+                startActivity(intent)
+            }
+
+        })
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.adapter = ryvAdapter
         mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -135,40 +178,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return max;
-    }
-
-    fun getJsonArray(response:JSONObject){
-        val total_count = response.optInt("total_count")
-        totalCount = total_count
-
-        var array = response.getJSONArray("items")
-        val len = array.length()
-        var isisTypeOne = false
-        for(i in 0..len-1){
-            val jsonObject = array.optJSONObject(i)
-            var name = jsonObject.optString("login")
-            var imgUrl = jsonObject.optString("avatar_url")
-            var type:Int = (Math.random()*3).roundToInt()
-            if(isisTypeOne){
-                isisTypeOne=false
-                type = TYPE_QUARTER
-            }else {
-                if (type == TYPE_QUARTER) {
-                    isisTypeOne = true
-                }
-            }
-            val json = JSONObject()
-            json.put("name",name)
-            json.put("imgUrl",imgUrl)
-            json.put("type",type)
-
-            jsonArray.put(json)
-        }
-
-        if(::ryvAdapter.isInitialized) {
-            ryvAdapter.setData(jsonArray)
-            ryvAdapter.notifyDataSetChanged()
-        }
     }
 
     fun CallJsonPath(path:String){

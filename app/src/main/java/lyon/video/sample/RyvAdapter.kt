@@ -24,6 +24,15 @@ class CellAdapter(private var context: Context,private var jsonArray: JSONArray)
     RecyclerView.Adapter<CellAdapter.ViewHolder>(){
     lateinit var holder: ViewHolder
 
+    var itemClick:ItemClick?=null;
+
+    interface ItemClick {
+        fun onCLick(v: View, position: Int)
+    }
+
+    fun setOnItemClickListener(itemClick: ItemClick) {
+        this.itemClick = itemClick
+    }
 
     inner class ViewHolder(itemView: View, var viewType: Int) : RecyclerView.ViewHolder(itemView) {
         var nameTextView: TextView? = null
@@ -98,7 +107,11 @@ class CellAdapter(private var context: Context,private var jsonArray: JSONArray)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         jsonArray?:return
         holder?.bindModel(position)
-
+        holder.itemView.setOnClickListener {
+            if(itemClick!=null){
+                itemClick!!.onCLick(holder.itemView,position)
+            }
+        }
     }
 
     fun setData(jsonArray:JSONArray){
