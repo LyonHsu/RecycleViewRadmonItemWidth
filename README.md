@@ -1,6 +1,7 @@
 # RecycleView 隨機 Item 寬度 擺放
 
-17 video Code Task 
+17 Code Task 
+
 https://drive.google.com/file/d/1Bj5xyAzQFdhMnSVlIfxyS0-3hCH-nDQ2/view
 
 Goal : Implement an Android application including search and display users from GitHub API. 
