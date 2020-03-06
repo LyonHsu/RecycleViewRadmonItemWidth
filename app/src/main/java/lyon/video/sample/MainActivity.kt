@@ -18,6 +18,7 @@ import com.android.volley.VolleyError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import lyon.video.sample.Dialog.SearchDialog
+import lyon.video.sample.Mode.ListenerMode
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.concurrent.locks.Lock
@@ -26,10 +27,10 @@ import kotlin.math.roundToInt
 
 val spanCount =2;
 var http = "https://api.github.com/search/users?q=keyWord&page=%p"//EX:https://api.github.com/search/users?q=lyonhsu
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() , ListenerMode {
     val TAG = MainActivity::class.java.simpleName
     lateinit var volletTools:VolletTool
-    var keyWord = "LyonHsu"
+    var keyWord = "Lyon"
     var jsonArray=JSONArray()
     lateinit var ryvAdapter:CellAdapter
     var lastItemPosition =0;
@@ -74,57 +75,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun init(){
-        volletTools = VolletTool(this)
+        volletTools = VolletTool(this,this)
         var httpUrl = http.replace("keyWord",keyWord)
         httpUrl = httpUrl.replace("%p",page.toString())
         CallJsonPath(httpUrl)
-        volletTools.setOnCallJSONBackListener(object : VolletTool.OnCallJsonBack{
-            override fun onResponse(response: JSONObject) {
-                page++
-                canGetData = true
-                handler.removeCallbacks(runnable)
-                val total_count = response.optInt("total_count")
-                totalCount = total_count
 
-                var array = response.getJSONArray("items")
-                val len = array.length()
-                var isisTypeOne = false
-                for(i in 0..len-1){
-                    val jsonObject = array.optJSONObject(i)
-                    var name = jsonObject.optString("login")
-                    var imgUrl = jsonObject.optString("avatar_url")
-                    var html_url = jsonObject.optString("html_url")
-                    var type:Int = (Math.random()*3).roundToInt()
-                    if(isisTypeOne){
-                        isisTypeOne=false
-                        type = TYPE_QUARTER
-                    }else {
-                        if (type == TYPE_QUARTER) {
-                            isisTypeOne = true
-                        }
-                    }
-                    val json = JSONObject()
-                    json.put("name",name)
-                    json.put("imgUrl",imgUrl)
-                    json.put("type",type)
-                    json.put("html_url",html_url)
-
-                    jsonArray.put(json)
-                }
-
-                if(::ryvAdapter.isInitialized) {
-                    ryvAdapter.setData(jsonArray)
-                    ryvAdapter.notifyDataSetChanged()
-                }
-            }
-
-        })
-        volletTools.setOnErrorListener(object : VolletTool.OnError{
-            override fun Error(error: VolleyError) {
-                Log.e(TAG,"error http response:"+error)
-                handler.sendEmptyMessage(0)
-            }
-        })
         val mLayoutManager = StaggeredGridLayoutManager(spanCount,StaggeredGridLayoutManager.VERTICAL)
         ryvAdapter = CellAdapter(this, jsonArray)
         var context = this
@@ -142,20 +97,15 @@ class MainActivity : AppCompatActivity() {
         mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-
                 if (newState == RecyclerView.SCROLL_STATE_IDLE &&
-                    lastItemPosition + 1 == jsonArray.length()
+                    lastItemPosition + 1 >= ryvAdapter.itemCount
                 ) {
                     if (lastItemPosition < totalCount ) {
-                        if(canGetData) {
-                            canGetData = false
                             var httpUrl = http.replace("keyWord", keyWord)
                             httpUrl = httpUrl.replace("%p", page.toString())
                             CallJsonPath(httpUrl)
-                        }
                     }
                 }
-
             }
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -169,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun  findMax(lastPositions:IntArray):Int {
+    fun findMax(lastPositions:IntArray):Int {
         var max = lastPositions[0]
         for ( i in lastPositions.indices) {
             val value = lastPositions[i]
@@ -183,8 +133,6 @@ class MainActivity : AppCompatActivity() {
     fun CallJsonPath(path:String){
         if(::volletTools.isInitialized) {
             volletTools.CallJsonPath(path)
-            canGetData = false
-            handler.postDelayed(runnable, delayTime.toLong())
         }
     }
 
@@ -192,10 +140,22 @@ class MainActivity : AppCompatActivity() {
         AlertDialog.Builder(this).setTitle(getString(R.string.error)).setMessage(getString(R.string.net_error)).setCancelable(true).create().show()
         true
     }
-    val runnable = object :Runnable {
-        override fun run() {
-            canGetData = true
-            Log.e(TAG,"http canGetData:"+canGetData)
+
+
+    override fun getJsonArray(jsonArray: JSONArray,totalCount:Int) {
+        this.totalCount=totalCount
+        this.jsonArray=jsonArray
+        page++
+        if(::ryvAdapter.isInitialized) {
+            ryvAdapter.setData(jsonArray)
+            ryvAdapter.notifyDataSetChanged()
         }
     }
+
+    override fun setOnErrorListener(error: VolleyError) {
+        Log.e(TAG,"error http response:"+error)
+        handler.sendEmptyMessage(0)
+    }
+
+
 }

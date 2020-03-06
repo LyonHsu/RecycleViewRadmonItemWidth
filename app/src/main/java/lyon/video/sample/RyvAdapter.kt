@@ -14,8 +14,6 @@ import org.json.JSONArray
 import kotlin.math.roundToInt
 
 
-val typeCount = 4
-var isTypeOne =false
 val TYPE_FULL = 0
 val TYPE_HALF = 1
 val TYPE_QUARTER = 2
@@ -94,14 +92,8 @@ class CellAdapter(private var context: Context,private var jsonArray: JSONArray)
     }
 
     override fun getItemViewType(position: Int): Int {
-        val type = jsonArray.getJSONObject(position).opt("type")
-        when (type) {
-            TYPE_HALF -> return TYPE_HALF
-            TYPE_QUARTER -> {
-                return TYPE_QUARTER
-            }
-        }
-        return TYPE_FULL
+        val type = jsonArray.getJSONObject(position).optInt("type")
+        return type
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
